@@ -1,5 +1,5 @@
-from flask import Flask
-from sqlalchemy import create_engine
+from flask import Flask, render_template, request, redirect,jsonify, url_for, flash
+from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, SportItem
 
@@ -14,20 +14,27 @@ session = DBSession()
 @app.route('/')
 @app.route('/catalog/')
 def catalogMenu():
-    return "page to show the catalog"
+  categories = session.query(Category).order_by(asc(Category.name))
+  items = session.query(SportItem).order_by(asc(SportItem.id))
+  return render_template('catalog.html', categories = categories, items = items)	
+
 
 # Task 1: Create route for category here
 
 @app.route('/catalog/<int:category_id>/items/')
 def categoryMenu(category_id):
-    return "page to show a category items. Task 1 complete!"
+	categories = session.query(Category).order_by(asc(Category.name))
+	items = session.query(SportItem).filter_by(category_id = category_id)
+	return render_template('category.html', categories = categories, items = items)	
 
 # Task 2: Create route for item description function here
 
 
 @app.route('/catalog/<int:category_id>/<int:item_id>/')
 def itemMenu(category_id, item_id):
-    return "page to show an item's description. Task 2 complete!"
+	item = session.query(SportItem).filter_by(id = item_id).one()
+#return "page to show a category items. Task 1 complete!"
+	return render_template('description.html', item = item)
 
 # Task 3: Create a route for edit item function here
 
