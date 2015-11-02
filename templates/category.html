@@ -56,6 +56,10 @@
 			</div>
 		</a>
 	{% endfor %}
+	
+	<div id = "items">
+		<h2>Category name</h2>
+	</div>
 
 	{% for item in items %}
 		<a href = "{{url_for('itemMenu', category_id = item.category_id, item_id = item.id)}}">

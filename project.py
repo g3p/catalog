@@ -33,31 +33,61 @@ def categoryMenu(category_id):
 @app.route('/catalog/<int:category_id>/<int:item_id>/')
 def itemMenu(category_id, item_id):
 	item = session.query(SportItem).filter_by(id = item_id).one()
-#return "page to show a category items. Task 1 complete!"
 	return render_template('description.html', item = item)
 
 # Task 3: Create a route for edit item function here
 
-@app.route('/catalog/<int:category_id>/<int:item_id>/edit/')
+@app.route('/catalog/<int:category_id>/<int:item_id>/edit/', methods=['GET', 'POST'])
 def editItem(category_id, item_id):
-    return "page to edit an item's description. Task 3 complete!"
+    editedItem= session.query(
+        SportItem).filter_by(id=item_id).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            editedItem.name = request.form['name']
+            flash('Item Successfully Edited: %s' % editedItem.name)            
+        if request.form['description']:
+            editedItem.description = request.form['description']
+            flash('%s description Successfully Edited.' % editedItem.name)
+        return redirect(url_for('catalogMenu'))
+
+    else:
+        return render_template('editItem.html', item=editedItem)    
 
 
-# Task 4: Create a route for edit item function here
+# Task 4: Create a route for delete item function here
 
-@app.route('/catalog/<int:category_id>/<int:item_id>/delete/')
+@app.route('/catalog/<int:category_id>/<int:item_id>/delete/', methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
-    return "page to delete an item'. Task 4 complete!"
+    itemToDelete = session.query(
+        SportItem).filter_by(id=item_id).one()
+    if request.method == 'POST':
+        session.delete(itemToDelete)
+        flash('%s Successfully Deleted' % itemToDelete.name)
+        session.commit()
+        return redirect(url_for('categoryMenu', category_id=category_id))
+    else:
+        return render_template('deleteItem.html', item=itemToDelete)
+
 
 
 # Task 5: Create a route for edit item function here
 
-@app.route('/catalog/add/')
+@app.route('/catalog/add/', methods=['GET', 'POST'])
 def addItem():
-    return "page to add a newitem'. Task 5 complete!"
+    if request.method == 'POST':
+        newItem = SportItem(name=request.form['name'], description=request.form['description'], category_id=request.form['category'])
+        session.add(newItem)
+        flash('New Item %s Successfully Created' % newItem.name)
+        session.commit()
+        return redirect(url_for('catalogMenu'))
+    else:
+    	categories = session.query(Category).order_by(asc(Category.name))    	
+    	return render_template('newItem.html', categories = categories)    
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'
+
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
-
