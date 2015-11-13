@@ -57,9 +57,17 @@
 		</a>
 	{% endfor %}
 	
-	<div id = "items">
-		<h2>Category name</h2>
-	</div>
+	
+	{% for category in categories %}
+		{% with item=items|first %} 
+			{% if category.id == item.category_id %}
+			<div id = "items">
+				<h2>{{category.name}} items</h2>
+			</div>
+			{% endif %}		
+		{% endwith %}
+	{% endfor %}
+	
 
 	{% for item in items %}
 		<a href = "{{url_for('itemMenu', category_id = item.category_id, item_id = item.id)}}">
@@ -74,5 +82,7 @@
 			</div>
 		</a>
 	{% endfor %}	
+
+	
 	
 {% endblock %}
