@@ -162,8 +162,10 @@ def gdisconnect():
 def catalogMenu():
   categories = session.query(Category).order_by(asc(Category.name))
   items = session.query(SportItem).order_by(desc(SportItem.id))
-  return render_template('catalog.html', categories = categories, items = items)	
-
+  if 'username' not in login_session:
+      return render_template('catalog.html', categories = categories, items = items)	
+  else:
+    return render_template('catalog_logged_in.html', categories = categories, items = items)  
 
 # Task 1: Create route for category here
 
@@ -174,7 +176,6 @@ def categoryMenu(category_id):
 	return render_template('category.html', categories = categories, items = items)	
 
 # Task 2: Create route for item description function here
-
 
 @app.route('/catalog/<int:category_id>/<int:item_id>/')
 def itemMenu(category_id, item_id):
