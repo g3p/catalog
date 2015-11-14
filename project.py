@@ -155,7 +155,15 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+@app.route('/categories.json')
+def categoriesJSON():
+    categories = session.query(Category).all()   
+    return jsonify(categories=[c.serialize for c in categories])
 
+@app.route('/items.json')
+def categoryItemsJSON():
+    items = session.query(SportItem).all()   
+    return jsonify(items=[i.serialize for i in items])
 
 @app.route('/')
 @app.route('/catalog/')

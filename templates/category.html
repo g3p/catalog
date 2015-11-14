@@ -11,9 +11,6 @@
 	</div>
 	<div class="row banner main">
 		<div class="col-md-1"></div>
-		<div class="col-md-11 padding-none">
-			<h1>Categories</h1>
-		</div>
 	</div>
 
 <div class = 'flash'>
@@ -30,45 +27,41 @@
 
 </div>
 	
-	{% for category in categories %}
-		<a href = "{{url_for('categoryMenu', category_id = category.id)}}">
-			<div class="row">
-				<div class="col-md-1"></div>
-					<div class="col-md-10 category-list">
-						<div id = "categories">
-							<h3>{{category.name}}</h3>
-						</div>
-					</div>
-				<div class="col-md-1"></div>
-			</div>
-		</a>
-	{% endfor %}
-	
-	
-	{% for category in categories %}
-		{% with item=items|first %} 
-			{% if category.id == item.category_id %}
-			<div id = "items">
-				<h2>{{category.name}} items</h2>
-			</div>
-			{% endif %}		
-		{% endwith %}
-	{% endfor %}
-	
 
-	{% for item in items %}
-		<a href = "{{url_for('itemMenu', category_id = item.category_id, item_id = item.id)}}">
-			<div class="row">
-				<div class="col-md-1"></div>
-					<div class="col-md-10 category-list">
-						<div id = "items">
-							<h3>{{item.name}}</h3>
-						</div>
-					</div>
-				<div class="col-md-1"></div>
-			</div>
+
+<table border="3" align="center"> 
+	<tr>
+		<td>
+		{% for category in categories %}
+		<a href = "{{url_for('categoryMenu', category_id = category.id)}}">
+			<h3>{{category.name}}</h3>
+
 		</a>
-	{% endfor %}	
+		{% endfor %}
+		</td>
+		<td>
+			{% for category in categories %}
+			{% with item=items|first %} 
+			{% if category.id == item.category_id %}
+				<h2>{{category.name}} items</h2>
+			{% endif %}		
+			{% endwith %}
+			{% endfor %}		
+			{% for item in items %}
+			<a href = "{{url_for('itemMenu', category_id = item.category_id, item_id = item.id)}}">
+
+				{% for category in categories %}
+				{% if item.category_id == category.id %}
+				<h3>{{item.name}} ({{category.name}})</h3>					
+				{% endif %}	
+
+				{% endfor %}	
+
+			</a>
+			{% endfor %}	
+		</td>
+	</tr> 
+</table> 
 
 	
 	
