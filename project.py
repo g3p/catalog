@@ -210,43 +210,44 @@ def itemMenu(category_id, item_id):
 @app.route('/catalog/<int:category_id>/<int:item_id>/edit/',
            methods=['GET', 'POST'])
 def editItem(category_id, item_id):
-    editedItem = session.query(SportItem).filter_by(id=item_id).one()
     if 'username' not in login_session:
         return redirect(url_for('showLogin'))
+    editedItem = session.query(SportItem).filter_by(id=item_id).one()
+    if request.method == 'POST':
+        # edit item's name
+        if request.form['name']:
+            editedItem.name = request.form['name']
+            flash('Item Successfully Edited: %s' % editedItem.name)
+        #edit item's description
+        if request.form['description']:
+            editedItem.description = request.form['description']
+            flash('%s description Successfully Edited.' % editedItem.name)
+        session.commit()
+        return redirect(url_for('catalogMenu'))
     else:
-        if request.method == 'POST':
-            if request.form['name']:
-                editedItem.name = request.form['name']
-                flash('Item Successfully Edited: %s' % editedItem.name)
-            if request.form['description']:
-                editedItem.description = request.form['description']
-                flash('%s description Successfully Edited.' % editedItem.name)
-            return redirect(url_for('catalogMenu'))
-
-        else:
-            return render_template('editItem.html', item=editedItem)
-
+        return render_template('editItem.html', item=editedItem)
 
 # Task 4: Create a route for delete item function here
+
 
 @app.route('/catalog/<int:category_id>/<int:item_id>/delete/',
            methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
-    itemToDelete = session.query(
-            SportItem).filter_by(id=item_id).one()
     if 'username' not in login_session:
         return redirect(url_for('showLogin'))
+    itemToDelete = session.query(
+            SportItem).filter_by(id=item_id).one()
+    if request.method == 'POST':
+        # delete selected item, itemToDelete, from database
+        session.delete(itemToDelete)
+        flash('%s Successfully Deleted' % itemToDelete.name)
+        session.commit()
+        return redirect(url_for('categoryMenu', category_id=category_id))
     else:
-        if request.method == 'POST':
-            session.delete(itemToDelete)
-            flash('%s Successfully Deleted' % itemToDelete.name)
-            session.commit()
-            return redirect(url_for('categoryMenu', category_id=category_id))
-        else:
-            return render_template('deleteItem.html', item=itemToDelete)
+        return render_template('deleteItem.html', item=itemToDelete)
 
 
-# Task 5: Create a route for edit item function here
+# Task 5: Create a route for add item function here
 
 @app.route('/catalog/add/', methods=['GET', 'POST'])
 def addItem():

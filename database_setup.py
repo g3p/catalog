@@ -6,7 +6,6 @@ from sqlalchemy import create_engine
 Base = declarative_base()
 
 
-
 class User(Base):
     __tablename__ = 'user'
 
@@ -22,7 +21,7 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)    
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -40,9 +39,9 @@ class SportItem(Base):
     id = Column(Integer, primary_key=True)
     description = Column(String(500))
     category_id = Column(Integer, ForeignKey('category.id'))
-    category = relationship(Category)
+    category = relationship(Category, cascade="all,delete")
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)    
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -51,6 +50,7 @@ class SportItem(Base):
             'name': self.name,
             'description': self.description,
             'id': self.id,
+            'category_id': self.category_id,
         }
 
 
