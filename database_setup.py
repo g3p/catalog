@@ -39,7 +39,7 @@ class SportItem(Base):
     id = Column(Integer, primary_key=True)
     description = Column(String(500))
     category_id = Column(Integer, ForeignKey('category.id'))
-    category = relationship(Category, cascade="all,delete")
+    category = relationship(Category)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
